@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Tailwind v4 不自动加载 JS 配置，需显式引入设计系统 tokens */
+@config "../tailwind.config.ts";
 
 :root {
   --background: #1a1a1a;
