@@ -1,0 +1,42 @@
+完成 P0 管理后台剩余 7 个页面
+
+任务清单：详见项目根目录 ADMIN_REMAINING_TASKS.md
+
+已完成：
+- components/admin/AdminLayout.tsx — 侧边栏 + 9个菜单
+- components/admin/DataTable.tsx — 通用表格
+- components/admin/Modal.tsx — 通用弹窗
+- app/admin/layout.tsx — Admin 布局
+- app/admin/dashboard/page.tsx — Dashboard
+
+待实现（7个页面）：
+1. app/admin/users/page.tsx — 用户管理（列表/详情/编辑/充值/删除）
+2. app/admin/merchants/pending/page.tsx — 商家审核（列表/详情/批准/拒绝）
+3. app/admin/distributors/pending/page.tsx — 分站审核（列表/详情/批准/拒绝）
+4. app/admin/redeem-codes/page.tsx — 兑换码管理（列表/生成/作废）
+5. app/admin/packages/page.tsx — 套餐管理（CRUD）
+6. app/admin/channels/page.tsx — 渠道管理（CRUD）
+7. app/admin/referrals/page.tsx — 返佣管理（列表/统计/结算）
+
+技术要求：
+- 复用 DataTable/Modal/Card/Button/Input 组件
+- API 调用：api.get/post/put/delete（lib/api.ts）
+- 字段契约：严格按 ADMIN_REMAINING_TASKS.md 定义
+- 错误处理：try-catch + toast
+- 加载状态：loading 指示
+- 破坏性操作需确认（confirm 或确认 Modal）
+- quota 显示转换：quotaToDollars(quota)（lib/utils.ts）
+- 时间显示：Unix 秒转本地时间
+
+实现顺序（按任务清单建议）：
+1. 用户管理（最复杂，操作最多）
+2. 商家/分站审核（结构相似）
+3. 兑换码管理
+4. 套餐/渠道管理（配置页面）
+5. 返佣管理
+
+验证：
+- 本地 npm run dev（注意：3000 端口已占用，会自动用 3001 或其他可用端口）
+- 测试每个页面的 API 调用（后端：https://leapnode-backend-production.up.railway.app）
+
+一次性完成全部 7 个页面。
