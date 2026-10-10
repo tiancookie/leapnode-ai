@@ -33,21 +33,17 @@ const PROVIDER_COLORS: Record<string, string> = {
   "智谱 AI": "#3859ff",
 };
 
-/** 能力评分（mock：按模型名与能力名生成 60-100 的确定性分数） */
-// TODO: 接能力评分接口
+// Mock: 能力评分
 function capabilityScore(modelName: string, capability: string): number {
-  let hash = 0;
-  const str = modelName + capability;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash * 31 + str.charCodeAt(i)) % 997;
-  }
-  return 60 + (hash % 41);
+  const hash = modelName.length + capability.length;
+  return 70 + ((hash * 7) % 30);
 }
 
 export default function ModelsPage() {
-  const { data, error, isLoading } = useSWR<Model[]>("/api/dist/site/models", fetcher);
-  // 接口异常时兜底 mock，不让页面崩溃
-  const models = error || !data ? MOCK_MODELS : data;
+  const { data: models = MOCK_MODELS, isLoading } = useSWR<Model[]>(
+    "/api/models/public",
+    fetcher
+  );
 
   const [provider, setProvider] = useState<string | null>(null);
   const [capability, setCapability] = useState<string | null>(null);
@@ -57,25 +53,28 @@ export default function ModelsPage() {
     [models]
   );
 
-  const filtered = models.filter(
-    (m) =>
-      (!provider || m.provider === provider) &&
-      (!capability || m.capabilities.includes(capability))
-  );
+  const filtered = useMemo(() => {
+    return models.filter((m) => {
+      if (provider && m.provider !== provider) return false;
+      if (capability && !m.capabilities?.includes(capability)) return false;
+      return true;
+    });
+  }, [models, provider, capability]);
 
   return (
-    <div className="mx-auto w-full max-w-container px-4 py-8 sm:px-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">模型市场</h1>
-        <p className="mt-1 text-sm text-foreground-muted">
-          浏览全部接入模型，按供应商与能力筛选，价格透明
+    <div className="container mx-auto max-w-7xl px-4 py-12">
+      {/* 标题 */}
+      <div className="mb-8">
+        <h1 className="text-heading-1 mb-3">模型市场</h1>
+        <p className="text-body">
+          汇聚全球主流大模型，统一 API 接口，透明定价，按需调用
         </p>
       </div>
 
-      {/* 过滤器 */}
-      <div className="mb-6 flex flex-col gap-3">
+      {/* 筛选标签 */}
+      <div className="section-spacing flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-foreground-muted">供应商：</span>
+          <span className="text-sm text-secondary">供应商：</span>
           <FilterPill active={provider === null} onClick={() => setProvider(null)}>
             全部
           </FilterPill>
@@ -86,7 +85,7 @@ export default function ModelsPage() {
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-foreground-muted">能力：</span>
+          <span className="text-sm text-secondary">能力：</span>
           <FilterPill active={capability === null} onClick={() => setCapability(null)}>
             全部
           </FilterPill>
@@ -100,11 +99,11 @@ export default function ModelsPage() {
 
       {/* 模型卡片列表 */}
       {isLoading && !models.length ? (
-        <p className="py-16 text-center text-foreground-muted">加载中...</p>
+        <p className="py-16 text-center text-secondary">加载中...</p>
       ) : filtered.length === 0 ? (
-        <p className="py-16 text-center text-foreground-muted">没有符合筛选条件的模型</p>
+        <p className="py-16 text-center text-secondary">没有符合筛选条件的模型</p>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="list-gap">
           {filtered.map((model) => (
             <ModelCard key={model.id} model={model} />
           ))}
@@ -127,10 +126,10 @@ function FilterPill({
     <button
       onClick={onClick}
       className={cn(
-        "rounded-full border px-3 py-1 text-sm transition-colors",
+        "rounded-full border px-3 py-1.5 text-sm font-medium transition-all",
         active
-          ? "border-primary bg-primary/15 text-primary"
-          : "border-border bg-background-card text-foreground-muted hover:border-primary/50 hover:text-foreground"
+          ? "border-[var(--color-brand)] bg-[var(--color-brand-subtle)] text-[var(--color-brand)]"
+          : "border-[var(--border-default)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--text-primary)]"
       )}
     >
       {children}
@@ -140,78 +139,86 @@ function FilterPill({
 
 function ModelCard({ model }: { model: Model }) {
   const color = PROVIDER_COLORS[model.provider] || "#00d4aa";
-  const scoredCapabilities = model.capabilities.slice(0, 4);
+  const scoredCapabilities = (model.capabilities || []).slice(0, 4);
 
   return (
-    <Card className="p-5 transition-colors hover:border-primary/50">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-        {/* 图标 + 名称 */}
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+    <div className="card">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        {/* 左侧：图标 + 名称 */}
+        <div className="flex min-w-0 flex-1 items-start gap-4">
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-base font-bold text-white"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white"
             style={{ backgroundColor: color }}
           >
             {model.provider.charAt(0)}
           </span>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="truncate font-semibold text-foreground">{model.display_name}</h3>
-              <Badge variant={model.status === 1 ? "success" : "error"}>
-                {model.status === 1 ? "可用" : "维护中"}
-              </Badge>
-              {model.official_direct && <Badge variant="primary">官方直连</Badge>}
-              {model.web_search && <Badge variant="info">联网搜索</Badge>}
+          <div className="min-w-0 flex-1">
+            <div className="mb-2">
+              <h3 className="card-title mb-2">{model.display_name}</h3>
+              <p className="text-small mb-3">
+                {model.name} · {model.provider}
+              </p>
+              <div className="badge-group">
+                <span className={model.status === 1 ? "badge badge-success" : "badge badge-error"}>
+                  {model.status === 1 ? "可用" : "维护中"}
+                </span>
+                {model.official_direct && <span className="badge badge-info">官方直连</span>}
+                {model.web_search && <span className="badge badge-brand">联网搜索</span>}
+              </div>
             </div>
-            <p className="mt-1 truncate text-xs text-foreground-muted">
-              {model.name} · {model.provider}
-            </p>
           </div>
         </div>
 
-        {/* 价格 + 上下文 */}
-        <div className="flex shrink-0 gap-6 text-sm lg:w-64">
-          <div>
-            <p className="text-foreground-muted">输入</p>
-            <p className="mt-0.5 font-medium text-foreground">¥{model.input_price}/1M</p>
+        {/* 中间：价格 + 上下文 */}
+        <div className="price-grid lg:w-80">
+          <div className="price-item">
+            <span className="price-label">📥 输入</span>
+            <div>
+              <span className="price-value">¥{model.input_price}</span>
+              <span className="price-unit">/1M</span>
+            </div>
           </div>
-          <div>
-            <p className="text-foreground-muted">输出</p>
-            <p className="mt-0.5 font-medium text-foreground">¥{model.output_price}/1M</p>
+          <div className="price-item">
+            <span className="price-label">📤 输出</span>
+            <div>
+              <span className="price-value">¥{model.output_price}</span>
+              <span className="price-unit">/1M</span>
+            </div>
           </div>
-          <div>
-            <p className="text-foreground-muted">上下文</p>
-            <p className="mt-0.5 font-medium text-foreground">
-              {abbreviateNumber(model.context_window)}
-            </p>
+          <div className="price-item">
+            <span className="price-label">📄 上下文</span>
+            <span className="price-value">{abbreviateNumber(model.context_window ?? 0)}</span>
           </div>
         </div>
 
-        {/* 能力评分条 */}
-        <div className="flex w-full shrink-0 flex-col gap-1.5 lg:w-52">
+        {/* 右侧：能力评分 */}
+        <div className="metric-list lg:w-64">
           {scoredCapabilities.map((cap) => {
             const score = capabilityScore(model.name, cap);
+            const scoreLevel = score >= 90 ? "high" : score >= 70 ? "medium" : "low";
             return (
-              <div key={cap} className="flex items-center gap-2 text-xs">
-                <span className="w-14 shrink-0 text-foreground-muted">{cap}</span>
-                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-background-hover">
+              <div key={cap} className="metric-item">
+                <span className="metric-label">{cap}</span>
+                <span className="metric-value">{score}</span>
+                <div className="metric-bar">
                   <div
-                    className="h-full rounded-full bg-primary"
+                    className="metric-bar-fill"
+                    data-score={scoreLevel}
                     style={{ width: `${score}%` }}
                   />
                 </div>
-                <span className="w-7 text-right text-foreground-muted">{score}</span>
               </div>
             );
           })}
         </div>
 
-        {/* 使用按钮 */}
+        {/* 操作按钮 */}
         <div className="shrink-0">
           <Link href="/console">
-            <Button size="sm">使用</Button>
+            <button className="btn btn-primary">使用</button>
           </Link>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
