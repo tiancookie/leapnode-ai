@@ -90,15 +90,15 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-16">
-      <Card className="w-full max-w-md">
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-foreground">注册 LeapNode</h1>
-          <p className="mt-2 text-sm text-foreground-muted">
+      <div className="card w-full max-w-md">
+        <div className="mb-8 text-center">
+          <h1 className="text-heading-2 mb-3">注册 LeapNode</h1>
+          <p className="text-body">
             创建账号，一键连接全球大模型
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
           <Input
             label="用户名"
             placeholder="3-20 位字母、数字或下划线"
@@ -142,9 +142,9 @@ export default function RegisterPage() {
           />
 
           {submitError && (
-            <p className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error">
-              {submitError}
-            </p>
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3">
+              <p className="text-sm text-red-400">{submitError}</p>
+            </div>
           )}
 
           <Button type="submit" size="lg" loading={loading} className="mt-2 w-full">
@@ -152,13 +152,15 @@ export default function RegisterPage() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-foreground-muted">
+        <div className="divider" />
+
+        <p className="text-center text-small">
           已有账号？{" "}
-          <Link href="/login" className="text-primary hover:text-primary-hover">
+          <Link href="/login" className="text-[var(--color-brand)] hover:underline">
             立即登录
           </Link>
         </p>
-      </Card>
+      </div>
     </div>
   );
 }
