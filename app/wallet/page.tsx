@@ -10,7 +10,6 @@ import type { PaginatedResponse, TopupRecord, User } from "@/lib/types";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 
 function WalletContent() {
@@ -45,7 +44,6 @@ function WalletContent() {
       if (res.success) {
         setRedeemMsg({ ok: true, text: "兑换成功，余额已到账" });
         setCode("");
-        // 刷新余额与充值记录
         const refreshed = await mutate("/api/dist/user/self");
         if (refreshed && typeof (refreshed as User).quota === "number") {
           updateQuota((refreshed as User).quota);
@@ -76,7 +74,6 @@ function WalletContent() {
     }
     setPaying(true);
     try {
-      // TODO: 接 USDT 支付完整流程（展示收款地址/二维码 + 轮询 cryptoStatus）
       const res = await topupService.cryptoPay(amount);
       if (res.success) {
         setUsdtMsg({ ok: true, text: "订单已创建，请按指引完成 USDT 转账" });
@@ -92,53 +89,57 @@ function WalletContent() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-container px-4 py-8 sm:px-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">钱包管理</h1>
-        <p className="mt-1 text-sm text-foreground-muted">查看余额、充值与充值记录</p>
+    <div className="container mx-auto max-w-7xl px-4 py-12">
+      <div className="mb-8">
+        <h1 className="text-heading-1 mb-3">钱包管理</h1>
+        <p className="text-body">查看余额、充值与充值记录</p>
       </div>
 
-      {/* 余额 */}
-      <Card className="bg-gradient-to-r from-primary/15 to-transparent">
-        <p className="text-sm text-foreground-muted">当前余额</p>
-        <p className="mt-2 text-4xl font-bold text-foreground">
+      {/* 余额卡片 */}
+      <div className="card mb-8" style={{
+        background: "linear-gradient(to right, rgba(0, 212, 170, 0.15), transparent)"
+      }}>
+        <p className="text-small mb-3">当前余额</p>
+        <p className="text-5xl font-bold text-[var(--color-brand)] mb-2">
           {user ? quotaToDollars(user.quota) : "--"}
         </p>
-        <p className="mt-1 text-sm text-foreground-muted">
+        <p className="text-body">
           {user ? `≈ ${quotaToCNY(user.quota)}` : ""}
         </p>
-      </Card>
+      </div>
 
       {/* 充值入口 */}
-      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>兑换码充值</CardTitle>
-            <CardDescription>输入兑换码，额度实时到账</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleRedeem} className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-10">
+        <div className="card">
+          <h3 className="card-title mb-2">兑换码充值</h3>
+          <p className="text-small mb-5">输入兑换码，额度实时到账</p>
+          <form onSubmit={handleRedeem} className="flex flex-col gap-4">
             <Input
               placeholder="请输入兑换码"
               value={code}
               onChange={(e) => setCode(e.target.value)}
             />
             {redeemMsg && (
-              <p className={`text-sm ${redeemMsg.ok ? "text-success" : "text-error"}`}>
-                {redeemMsg.text}
-              </p>
+              <div className={`rounded-lg px-4 py-3 ${
+                redeemMsg.ok 
+                  ? "bg-green-500/10 border border-green-500/20" 
+                  : "bg-red-500/10 border border-red-500/20"
+              }`}>
+                <p className={`text-sm ${redeemMsg.ok ? "text-green-400" : "text-red-400"}`}>
+                  {redeemMsg.text}
+                </p>
+              </div>
             )}
             <Button type="submit" loading={redeeming} className="self-start">
               兑换
             </Button>
           </form>
-        </Card>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>USDT 充值</CardTitle>
-            <CardDescription>TRC20 网络，1 USDT = $1.00 额度</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleCryptoPay} className="flex flex-col gap-3">
+        <div className="card">
+          <h3 className="card-title mb-2">USDT 充值</h3>
+          <p className="text-small mb-5">TRC20 网络，1 USDT = $1.00 额度</p>
+          <form onSubmit={handleCryptoPay} className="flex flex-col gap-4">
             <Input
               type="number"
               min="1"
@@ -148,55 +149,54 @@ function WalletContent() {
               onChange={(e) => setUsdtAmount(e.target.value)}
             />
             {usdtMsg && (
-              <p className={`text-sm ${usdtMsg.ok ? "text-success" : "text-error"}`}>
-                {usdtMsg.text}
-              </p>
+              <div className={`rounded-lg px-4 py-3 ${
+                usdtMsg.ok 
+                  ? "bg-green-500/10 border border-green-500/20" 
+                  : "bg-red-500/10 border border-red-500/20"
+              }`}>
+                <p className={`text-sm ${usdtMsg.ok ? "text-green-400" : "text-red-400"}`}>
+                  {usdtMsg.text}
+                </p>
+              </div>
             )}
             <Button type="submit" loading={paying} className="self-start">
               创建订单
             </Button>
           </form>
-        </Card>
+        </div>
       </div>
 
       {/* 充值记录 */}
-      <div className="mt-8">
-        <h2 className="mb-3 text-lg font-semibold text-foreground">充值记录</h2>
-        <Card className="overflow-x-auto p-0">
-          <table className="w-full min-w-[560px] text-sm">
+      <div>
+        <h2 className="text-heading-2 mb-5">充值记录</h2>
+        <div className="table-wrapper">
+          <table className="table">
             <thead>
-              <tr className="border-b border-border text-left text-foreground-muted">
-                <th className="px-4 py-3 font-medium">时间</th>
-                <th className="px-4 py-3 font-medium">方式</th>
-                <th className="px-4 py-3 font-medium">订单号</th>
-                <th className="px-4 py-3 font-medium">金额</th>
-                <th className="px-4 py-3 font-medium">状态</th>
+              <tr>
+                <th>时间</th>
+                <th>方式</th>
+                <th>订单号</th>
+                <th className="text-right">金额</th>
+                <th>状态</th>
               </tr>
             </thead>
             <tbody>
               {records.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-foreground-muted">
+                  <td colSpan={5} className="text-center py-12 text-secondary">
                     暂无充值记录
                   </td>
                 </tr>
               ) : (
                 records.map((record) => (
-                  <tr
-                    key={record.id}
-                    className="border-b border-border/50 last:border-0 hover:bg-background-hover"
-                  >
-                    <td className="whitespace-nowrap px-4 py-3 text-foreground-muted">
-                      {record.created_at}
-                    </td>
-                    <td className="px-4 py-3 text-foreground">{record.method}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-foreground-muted">
-                      {record.order_no}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 font-medium text-success">
+                  <tr key={record.id}>
+                    <td className="text-sm">{record.created_at}</td>
+                    <td>{record.method}</td>
+                    <td className="font-mono text-xs text-secondary">{record.order_no}</td>
+                    <td className="text-right font-semibold text-green-400">
                       +{record.amount.toFixed(2)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <Badge variant={record.status === 1 ? "success" : "warning"}>
                         {record.status === 1 ? "已到账" : "处理中"}
                       </Badge>
@@ -206,7 +206,7 @@ function WalletContent() {
               )}
             </tbody>
           </table>
-        </Card>
+        </div>
       </div>
     </div>
   );
