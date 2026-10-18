@@ -193,7 +193,7 @@ export default function PackagesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">套餐管理</h1>
+          <h1 className="text-heading-1">套餐管理</h1>
           <p className="mt-1 text-sm text-foreground-muted">管理官方套餐</p>
         </div>
         <Button onClick={openCreateModal}>新建套餐</Button>

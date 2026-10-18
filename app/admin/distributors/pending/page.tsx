@@ -143,7 +143,7 @@ export default function DistributorsPendingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">分站审核</h1>
+        <h1 className="text-heading-1">分站审核</h1>
         <p className="mt-1 text-sm text-foreground-muted">待审核的分站申请</p>
       </div>
 

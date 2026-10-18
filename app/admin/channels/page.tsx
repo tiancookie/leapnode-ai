@@ -190,7 +190,7 @@ export default function ChannelsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">渠道管理</h1>
+          <h1 className="text-heading-1">渠道管理</h1>
           <p className="mt-1 text-sm text-foreground-muted">管理官方渠道</p>
         </div>
         <Button onClick={openCreateModal}>新建渠道</Button>

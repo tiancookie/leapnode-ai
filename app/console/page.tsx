@@ -50,17 +50,17 @@ function ConsoleContent() {
   const stats = [
     {
       label: "余额",
-      value: user ? quotaToDollars(user.quota) : "--",
-      sub: user ? `≈ ${quotaToCNY(user.quota)}` : "",
+      value: user ? quotaToDollars(user.quota ?? 0) : "--",
+      sub: user ? `≈ ${quotaToCNY(user.quota ?? 0)}` : "",
     },
     {
       label: "今日调用",
-      value: user ? formatNumber(user.request_count) : "--",
+      value: user ? formatNumber(user.request_count ?? 0) : "--",
       sub: "累计请求次数",
     },
     {
       label: "本月消费",
-      value: user ? quotaToDollars(user.used_quota) : "--",
+      value: user ? quotaToDollars(user.used_quota ?? 0) : "--",
       sub: "累计消费额度",
     },
     {
@@ -71,11 +71,11 @@ function ConsoleContent() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-container px-4 py-8 sm:px-6">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6">
+      <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">控制台</h1>
-          <p className="mt-1 text-sm text-foreground-muted">
+          <h1 className="text-heading-1">控制台</h1>
+          <p className="text-body mt-3">
             欢迎回来，{user?.display_name || user?.username || "用户"}
           </p>
         </div>
@@ -85,22 +85,22 @@ function ConsoleContent() {
       </div>
 
       {/* 统计卡片 */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.label} className="p-5">
-            <p className="text-sm text-foreground-muted">{stat.label}</p>
-            <p className="mt-2 text-2xl font-bold text-foreground">{stat.value}</p>
-            {stat.sub && <p className="mt-1 text-xs text-foreground-disabled">{stat.sub}</p>}
-          </Card>
+          <div key={stat.label} className="card">
+            <p className="text-small">{stat.label}</p>
+            <p className="mt-3 text-2xl font-bold text-[var(--text-primary)]">{stat.value}</p>
+            {stat.sub && <p className="mt-2 text-tiny">{stat.sub}</p>}
+          </div>
         ))}
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-5">
+      <div className="mt-8 grid grid-cols-1 gap-8 xl:grid-cols-5">
         {/* 左：模型卡片网格 */}
         <div className="xl:col-span-2">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-foreground">热门模型</h2>
-            <Link href="/models" className="text-sm text-primary hover:text-primary-hover">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-heading-3">热门模型</h2>
+            <Link href="/models" className="text-small text-[var(--color-brand)] hover:underline">
               查看全部 →
             </Link>
           </div>
@@ -158,14 +158,14 @@ function ConsoleContent() {
                       <td
                         className={cn(
                           "whitespace-nowrap px-4 py-3 font-medium",
-                          log.amount >= 0 ? "text-success" : "text-foreground"
+                          (log.amount ?? 0) >= 0 ? "text-success" : "text-foreground"
                         )}
                       >
-                        {log.amount >= 0 ? "+" : ""}
-                        {log.amount.toFixed(2)}
+                        {(log.amount ?? 0) >= 0 ? "+" : ""}
+                        {(log.amount ?? 0).toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 text-foreground-muted">
-                        {log.balance > 0 ? `$${log.balance.toFixed(2)}` : "-"}
+                        {(log.balance ?? 0) > 0 ? `$${(log.balance ?? 0).toFixed(2)}` : "-"}
                       </td>
                       <td className="px-4 py-3">
                         <Badge variant={log.status === 1 ? "success" : "error"}>

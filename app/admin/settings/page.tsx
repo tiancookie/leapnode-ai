@@ -92,7 +92,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">系统配置</h1>
+        <h1 className="text-heading-1">系统配置</h1>
         <p className="mt-1 text-sm text-foreground-muted">全局系统设置</p>
       </div>
 

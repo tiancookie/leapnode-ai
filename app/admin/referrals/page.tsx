@@ -153,7 +153,7 @@ export default function ReferralsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">返佣管理</h1>
+        <h1 className="text-heading-1">返佣管理</h1>
         <p className="mt-1 text-sm text-foreground-muted">返佣记录与结算</p>
       </div>
 
@@ -165,7 +165,7 @@ export default function ReferralsPage() {
               <div className="text-2xl">💰</div>
               <div>
                 <p className="text-xs text-foreground-muted">总返佣金额</p>
-                <p className="text-lg font-bold text-foreground">{quotaToDollars(stats.total_amount)}</p>
+                <p className="text-heading-3">{quotaToDollars(stats.total_amount)}</p>
               </div>
             </CardContent>
           </Card>
@@ -192,7 +192,7 @@ export default function ReferralsPage() {
               <div className="text-2xl">📊</div>
               <div>
                 <p className="text-xs text-foreground-muted">记录总数</p>
-                <p className="text-lg font-bold text-foreground">{stats.total_count}</p>
+                <p className="text-heading-3">{stats.total_count}</p>
               </div>
             </CardContent>
           </Card>

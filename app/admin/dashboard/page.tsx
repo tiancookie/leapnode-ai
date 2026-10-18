@@ -118,7 +118,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">数据概览</h1>
+        <h1 className="text-heading-1">数据概览</h1>
         <p className="mt-1 text-sm text-foreground-muted">总端管理后台 - 关键指标</p>
       </div>
 
@@ -129,7 +129,7 @@ export default function AdminDashboardPage() {
             <div className={`text-3xl ${card.color}`}>{card.icon}</div>
             <div className="flex-1">
               <p className="text-xs text-foreground-muted">{card.label}</p>
-              <p className="text-xl font-bold text-foreground">{card.value}</p>
+              <p className="text-heading-2">{card.value}</p>
               {card.sublabel && <p className="text-xs text-foreground-muted">{card.sublabel}</p>}
             </div>
           </Card>

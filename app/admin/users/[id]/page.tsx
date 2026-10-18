@@ -105,7 +105,7 @@ export default function UserDetailPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">用户详情</h1>
+          <h1 className="text-heading-1">用户详情</h1>
           <p className="mt-1 text-sm text-foreground-muted">ID: {user.id}</p>
         </div>
         <Button variant="secondary" onClick={() => router.back()}>

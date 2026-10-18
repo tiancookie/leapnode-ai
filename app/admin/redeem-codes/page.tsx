@@ -192,7 +192,7 @@ export default function RedeemCodesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">兑换码管理</h1>
+          <h1 className="text-heading-1">兑换码管理</h1>
           <p className="mt-1 text-sm text-foreground-muted">生成和管理充值兑换码</p>
         </div>
         <Button onClick={() => setGenerateModalOpen(true)}>生成兑换码</Button>

@@ -81,17 +81,15 @@ function SettingsContent() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">个人设置</h1>
-        <p className="mt-1 text-sm text-foreground-muted">管理账号信息与安全设置</p>
+    <div className="container mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <div className="mb-8">
+        <h1 className="text-heading-1">个人设置</h1>
+        <p className="text-body mt-3">管理账号信息与安全设置</p>
       </div>
 
       {/* 基本信息 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>基本信息</CardTitle>
-        </CardHeader>
+      <div className="card">
+        <h2 className="text-heading-3 mb-6">基本信息</h2>
         <dl className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
           <div>
             <dt className="text-sm text-foreground-muted">用户名</dt>
@@ -142,15 +140,13 @@ function SettingsContent() {
             </dd>
           </div>
         </dl>
-      </Card>
+      </div>
 
       {/* 修改密码 */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>修改密码</CardTitle>
-          <CardDescription>修改后请使用新密码重新登录</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleChangePassword} className="flex flex-col gap-4" noValidate>
+      <div className="card mt-8">
+        <h2 className="text-heading-3 mb-2">修改密码</h2>
+        <p className="text-small mb-6">修改后请使用新密码重新登录</p>
+        <form onSubmit={handleChangePassword} className="flex flex-col gap-5" noValidate>
           <Input
             label="当前密码"
             type="password"
@@ -177,15 +173,17 @@ function SettingsContent() {
             autoComplete="new-password"
           />
           {pwdMsg && (
-            <p className={`text-sm ${pwdMsg.ok ? "text-success" : "text-error"}`}>
-              {pwdMsg.text}
-            </p>
+            <div className={`rounded-lg px-4 py-3 ${pwdMsg.ok ? "bg-green-500/10 border border-green-500/20" : "bg-red-500/10 border border-red-500/20"}`}>
+              <p className={`text-sm ${pwdMsg.ok ? "text-green-400" : "text-red-400"}`}>
+                {pwdMsg.text}
+              </p>
+            </div>
           )}
           <Button type="submit" loading={saving} className="self-start">
             保存修改
           </Button>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

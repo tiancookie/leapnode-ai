@@ -49,7 +49,7 @@ export default function ModelsPage() {
   const [capability, setCapability] = useState<string | null>(null);
 
   const providers = useMemo(
-    () => Array.from(new Set(models.map((m) => m.provider))),
+    () => Array.from(new Set(models.map((m) => m.provider).filter((p): p is string => Boolean(p)))),
     [models]
   );
 
@@ -138,7 +138,8 @@ function FilterPill({
 }
 
 function ModelCard({ model }: { model: Model }) {
-  const color = PROVIDER_COLORS[model.provider] || "#00d4aa";
+  const provider = model.provider || "";
+  const color = PROVIDER_COLORS[provider] || "#00d4aa";
   const scoredCapabilities = (model.capabilities || []).slice(0, 4);
 
   return (
@@ -150,7 +151,7 @@ function ModelCard({ model }: { model: Model }) {
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white"
             style={{ backgroundColor: color }}
           >
-            {model.provider.charAt(0)}
+            {provider.charAt(0) || "?"}
           </span>
           <div className="min-w-0 flex-1">
             <div className="mb-2">
